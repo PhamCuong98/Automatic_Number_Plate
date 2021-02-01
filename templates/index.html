@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+        <h1 style="font-size: 250%;">THONG KE BIEN SO</h1>
+        {% for pic in pics %}
+        <img src='/static/images/{{pic}}', style= "float: right; height: 400px; width: 400px;"/>
+        {% endfor %}
+        <p style="font-size: 150%; color: brown; margin: 10px;"> 
+            <!-- in dam text-->
+            <b>Pham Ngoc Cuong</b><br>
+            <!-- Nghieng text-->
+            <i>School: Bach Khoa Da Nang</i><br>
+            <!-- Nghieng text co cach dieu font-->
+            <em>De tai: Tracking bien so</em>
+        </p>
+        <br>
+        <button type="button" onclick="myFunction()">Refresh !</button>
+
+        <p id="demo">Nhan de cap nhat.</p>
+        <script>
+            function myFunction(){
+                window.location.reload();
+                document.getElementById("demo").innerHTML="Da Refresh- Tiep tuc F5"
+            }
+        </script>
+        <br>
+        <table style="width: 70%;">
+            <tr>
+                <th>Thoi gian</th>
+                <th>Bienso</th>
+                <th>ID</th>
+            </tr>
+            {%for i in range(0, len_n)%}
+            <tr>
+                <th>{{time[i]}}</th>
+                <th>{{bienso[i]}}</th>
+                <th>{{i}}</th>
+            </tr>
+            {%endfor%}
+        </table>
+{% endblock %}
