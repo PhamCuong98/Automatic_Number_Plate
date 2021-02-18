@@ -53,8 +53,7 @@ def bienso():
   print(time)
   print(bienso)
   len_n = len(time)
-  pics = os.listdir('static/images/') 
-  return render_template('index.html', time= time, bienso= bienso, len_n=len_n, pics=pics)
+  return render_template('index.html', time= time, bienso= bienso, len_n=len_n)
 def login():
   name= request.form['username']
   pwd= request.form['password']
@@ -67,4 +66,4 @@ def login():
     bienso()
 
 if __name__ == '__main__':
-    app.run(debug= False)
+    app.run(debug= True)
