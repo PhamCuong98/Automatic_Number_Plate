@@ -52,16 +52,20 @@ class processImage(QWidget):
         label_yolo.setPixmap(yolo)
         label_yolo.resize(300,200)
         mypic.addWidget(label_yolo)
-        time= self.getTime()
+        
+        time, day= self.getTime()
         print(time)
+        print(day)
         self.infor.append(time)
+        self.infor.append(day)
         self.infor.append(license)
         sql= mySQL(self.infor)
         sql.public()
     def getTime(self):
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        return current_time
+        current_day = now.strftime("%d/%m/%Y")
+        return current_time, current_day
         
 if __name__ == '__main__':
     main()

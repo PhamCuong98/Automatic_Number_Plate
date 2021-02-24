@@ -12,7 +12,7 @@ class mySQL(object):
     def public(self):
         self.mydb= mysql.connector.connect(host=host, user=user, password=password, database= database)
         self.mycursor= self.mydb.cursor()
-        sql= "INSERT INTO bienso (time, soxe) VALUES (%s, %s)"
+        sql= "INSERT INTO bienso (time, day, soxe) VALUES (%s, %s, %s)"
         self.mycursor.execute(sql, self.infor)
         self.mydb.commit()
         print(self.mycursor.rowcount, "Da Insert")
