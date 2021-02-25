@@ -1,8 +1,8 @@
 import mysql.connector
 
-host= "localhost"
+host= "123.19.252.125"
 user= "root"
-password= "ngoccuong1812"
+password= "Ngoccuong@1812"
 database= "mydatabase"
 
 class mySQL(object):
