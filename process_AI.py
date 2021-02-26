@@ -143,23 +143,22 @@ class Yolo4(object):
         return image, top, left, bottom, right
 
 class process_img(object):
-    def __init__(self, path_img):
-        self.path_img= path_img
+    def __init__(self, image):
+        self.image= image
 
     def detect_box(self, input_size=(608, 608)):
-        image= Image.open(self.path_img)
-        image= image.resize(input_size)
-        result, top, left, bottom, right = yolo4_model.detect_image(image, model_image_size=model_image_size)
+        #image_arr= np.array(self.image)
+        result, top, left, bottom, right = yolo4_model.detect_image(self.image, model_image_size=model_image_size)
         return result, top, left, bottom, right
 
-    def dectect_character(self, input_size=(608, 608)):
+    def dectect_character(self):
+        self.image_arr= np.array(self.image)
         result, top, left, bottom, right= self.detect_box()
-        image= cv2.imread(self.path_img)
-        image= cv2.resize(image, input_size)
+        
         pts1= np.float32([[left, top], [right,top], [left, bottom], [right, bottom]])
         pts2= np.float32([[0, 0], [600,0], [0, 300], [600, 300]])
         img_bird= cv2.getPerspectiveTransform(pts1, pts2)
-        result_bird= cv2.warpPerspective(image, img_bird, (600, 300))
+        result_bird= cv2.warpPerspective(self.image_arr, img_bird, (600, 300))
         image_split= cv2.cvtColor(result_bird, cv2.COLOR_BGR2GRAY)
         ret, thresh2= cv2.threshold(image_split, 125, 255, cv2.THRESH_BINARY)
         thresh2 = cv2.medianBlur(thresh2, 5)
@@ -182,8 +181,11 @@ class process_img(object):
         print("So contour tim dc: ", countContours)
         return result, box, countContours, result_bird
 
-    def process_AI(self, path_img):
-        img_detect= process_img(path_img)
+    def readfile(self, image):
+        pass
+
+    def process_AI(self, image):
+        img_detect= process_img(image)
         result, boxes, countContours, result_bird= img_detect.dectect_character()
         
         result_arr= np.array(result_bird)
