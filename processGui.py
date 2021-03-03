@@ -36,7 +36,9 @@ class processCamera(QWidget):
         label.setPixmap(pic)
         label.resize(300,200)
         self.horizontalLayout.addWidget(label)
-        qimage2 = QImage(result_arr, result_arr.shape[1], result_arr.shape[0], QImage.Format_RGB888)                                                                                                                                                                  
+
+        result_arr_3=np.stack((result_arr,)*3, -1)
+        qimage2 = QImage(result_arr_3, result_arr_3.shape[1], result_arr_3.shape[0], QImage.Format_RGB888)                                                                                                                                                         
         yolo = QPixmap(qimage2)
         label_yolo = QLabel()
         label_yolo.setPixmap(yolo)
@@ -104,7 +106,7 @@ class processImage(QWidget):
         self.show()
 
     def getImage(self, path_img):
-        self.setGeometry( 300, 300, 350, 300 )
+        #self.setGeometry( 300, 300, 350, 300 )
         self.setWindowTitle('Xu ly image')
         self.show()
         
@@ -116,18 +118,22 @@ class processImage(QWidget):
         process= process_img(image)
         licenses, result_arr = process.process_AI(image)
         print(licenses)
-        
+        #licenses.reverse()
+        print("ádsa")
+        print(result_arr.shape)
         self.horizontalLayout = QHBoxLayout()
         pic = QPixmap(path_img)
         label= QLabel()
         label.setPixmap(pic)
         label.resize(300,200)
         self.horizontalLayout.addWidget(label)
-        qimage = QImage(result_arr, result_arr.shape[1], result_arr.shape[0], QImage.Format_RGB888)                                                                                                                                                                  
+
+        result_arr_3=np.stack((result_arr,)*3, -1)
+        qimage = QImage(result_arr_3, result_arr_3.shape[1], result_arr_3.shape[0],QImage.Format_RGB888)                                                                                                                                                               
         yolo = QPixmap(qimage)
         label_yolo = QLabel()
         label_yolo.setPixmap(yolo)
-        label_yolo.resize(300,200)
+        #label_yolo.resize(300,200)
         self.horizontalLayout.addWidget(label_yolo)
 
         self.horizontalLayout2 = QHBoxLayout()

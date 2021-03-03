@@ -9,6 +9,7 @@ import cv2
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QThread
 import numpy as np
 from processGui import processCamera, processImage
+
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
 
@@ -117,7 +118,7 @@ class MyTableWidge(QWidget):
         self.tab2.layout.addWidget(self.pushbutton1Tab2)
 
         self.tab2.setLayout(self.tab2.layout)
-    #<-------------------------------End----------------------------------->
+    #<-------------------------------End---------------------- ------------->
         # Add tabs to widget
         self.layout.addWidget(self.tabs) 
         self.setLayout(self.layout)

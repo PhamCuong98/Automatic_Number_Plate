@@ -2,6 +2,7 @@ import os
 import colorsys
 import sys
 import numpy as np
+import keras
 from keras import backend as K
 from keras.models import load_model
 from keras.layers import Input
@@ -16,6 +17,11 @@ import cv2
 
 import tensorflow as tf
 from tensorflow.compat.v1.keras.models import load_model
+
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.compat.v1.Session(config=config)
+keras.backend.set_session(sess)
 
 print(tf.__version__)
 model = load_model(r"Model/my_model.h5")
@@ -161,28 +167,25 @@ class process_img(object):
         result_bird= cv2.warpPerspective(self.image_arr, img_bird, (600, 300))
         image_split= cv2.cvtColor(result_bird, cv2.COLOR_BGR2GRAY)
         ret, thresh2= cv2.threshold(image_split, 125, 255, cv2.THRESH_BINARY)
-        thresh2 = cv2.medianBlur(thresh2, 5)
-        contours, hierarchy = cv2.findContours(thresh2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.floodFill(thresh2, None, (0,0), 255)
+        thresh_blur = cv2.medianBlur(thresh2, 5)
+        thresh2_2 = cv2.bitwise_not(thresh_blur)
+        contours, hierarchy = cv2.findContours(thresh2_2, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         countContours = 0
         box=[]
-        num=[]
         for contour in contours:
             x, y, w, h = contourRect = cv2.boundingRect(contour)
-            if 3000 < w * h < 10000:
-                countContours += 1
-                #cv2.rectangle(result_bird, (x, y), (x + w, y + h), (0, 255, 0))
-                box_img= result_bird[y:y+h,x:x+w]
-                box.append(box_img)
-        #box.reverse()
-        #print(type(box))
-        #for i in range(countContours):
-        #    print(str(box[i].shape))
-        #    plt.subplot(1, countContours, i+1), plt.imshow(box[i], 'gray') 
+            ratio= h/w
+            if 1.8<=ratio<=5.5:
+                if 2< thresh2_2.shape[0]/h< 3.5:
+                    print("Trong so")
+                    print(x, y, w, h, thresh2_2.shape[0])
+                    countContours += 1
+                    #cv2.rectangle(result_bird, (x, y), (x + w, y + h), (0, 255, 0))
+                    box_img= thresh2_2[y:y+h,x:x+w]
+                    box.append(box_img)
         print("So contour tim dc: ", countContours)
-        return result, box, countContours, result_bird
-
-    def readfile(self, image):
-        pass
+        return result, box, countContours, thresh2_2
 
     def process_AI(self, image):
         img_detect= process_img(image)
@@ -190,21 +193,21 @@ class process_img(object):
         
         result_arr= np.array(result_bird)
         num=[]
+        licenses=[]
         label_data= ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C','D', 'E', 'F', 'G', 'H', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z']
         #xu ly tung box chu so 
         for i in range(len(boxes)):
-            print(str(boxes[i].shape))
+            print(boxes[i].shape)
             box_img= cv2.resize(boxes[i], (28,28))
-            plt.subplot(1, len(boxes), i+1), plt.imshow(boxes[i], 'gray') 
-            ret, thresh_box= cv2.threshold(box_img, 125, 255, cv2.THRESH_BINARY_INV)
-            thresh_box = cv2.medianBlur(thresh_box, 3)
-            test= thresh_box.reshape(1,28,28,3)
+
+            box_img_3=np.stack((box_img,)*3, -1)
+            test= box_img_3.reshape(1,28,28,3)
             predict= model.predict(test)
             value= np.argmax(predict)
-            num.append(label_data[value])
-        print(num)
-        license = " ".join(num)
-        return license, result_arr
+            if value <31:
+                num.append(label_data[value])
+            licenses = " ".join(num)
+        return licenses, result_arr
 
 # Duong dan den file h5
 model_path = 'Model/yolo4_weight.h5'
